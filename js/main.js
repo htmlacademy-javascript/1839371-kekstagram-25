@@ -12,6 +12,6 @@ function commentLength(str, maxLegth = 140) {
 }
 
 
-randomInt(1, 4)
-commentLength('неnkm')
+randomInt();
+commentLength();
 
