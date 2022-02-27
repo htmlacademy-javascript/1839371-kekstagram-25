@@ -23,22 +23,21 @@ const usersId = Array.from({ length: SIMILAR_PHOTOSPECIFICATION_COUNT }, (v, i) 
 
 // генерирует случайное число в диапазоне min-max
 const randomInt = function (min, max) {
-  try {
-    if (min < max && min >= 0) {
-      return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + min;
-    }
+    try {
+      if (min < max && min >= 0) {
+        return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + min;
+      }
 
-    throw new Error('Диапазон задан некорректно');
+      throw new Error('Диапазон задан некорректно');
 
-  } catch (e) {
-    console.log(e.message);
+    } catch (e) {
   }
-}
+};
 
 
 // выбирает рандомный элемент из переданного массиива
 const getRandomArrayElement = (elem) => {
-  return elem[randomInt(0, elem.length - 1)];
+  return elem[randomInt(0, elem.length - 1)]
 };
 
 // создает массив обьектов в кол-ве SIMILAR_PHOTOSPECIFICATION_COUNT
@@ -65,11 +64,12 @@ const createPhotoSpecification = () => {
 };
 
 
-createPhotoSpecification()
+createPhotoSpecification();
 
 
 // проверяет длинну коментария
 const isCommentMaxLengthExceeded = function (str = '', maxLegth = 140) {
   return str.length <= maxLegth;
-}
+};
+
 isCommentMaxLengthExceeded();
