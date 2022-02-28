@@ -16,7 +16,7 @@ const MASSAGES = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-const SIMILAR_PHOTOSPECIFICATION_COUNT = 25;
+const SIMILAR_PHOTOSPECIFICATION_COUNT = 26;
 
 // генерирует массив от 1 до SIMILAR_PHOTOSPECIFICATION_COUNT
 const usersId = Array.from({ length: SIMILAR_PHOTOSPECIFICATION_COUNT }, (v, i) => i + 1);
@@ -34,37 +34,49 @@ const randomInt = function (min, max) {
   }
 };
 
-
 // выбирает рандомный элемент из переданного массиива
 const getRandomArrayElement = (elem) => {
-  return elem[randomInt(0, elem.length - 1)]
+  return elem[randomInt(0, elem.length - 1)];
 };
 
-// создает массив обьектов в кол-ве SIMILAR_PHOTOSPECIFICATION_COUNT
+// возвращает и удаляет рандомыный элемент из массива
+function getRandomId(arr) {
+  const i = randomInt(0, arr.length - 1);
+  const randomId = arr[i];
+  arr.splice(i, 1);
+  return randomId;
+}
+
+// создает обьект с комментариями к фото
+let idCom = 1;
+
+const createComments = () => ({
+  id: idCom++,
+  avatar: `img/avatar-${randomInt(1, 6)}.svg`,
+  message: getRandomArrayElement(MASSAGES),
+  name: getRandomArrayElement(NAMES)
+});
+
+
+// создает обьект описания фото с комментариями
 const createPhotoSpecification = () => {
-  const arr = [];
-  for (let i = 0; i < SIMILAR_PHOTOSPECIFICATION_COUNT; i++) {
+  const id = getRandomId(usersId)
+  return {
+    id: id,
+    url: `photos/${id}.jpg`,
+    description: `foto №${id}`,
+    likes: randomInt(15, 200),
 
-    arr.push({
-      id: usersId[i],
-      url: `photos/${usersId[i]}.jpg`,
-      description: `foto №${usersId[i]}`,
-      likes: randomInt(15, 200),
-
-      comments: {
-        id: usersId[i] + 100,
-        avatar: `img/avatar-${randomInt(1, 6)}.svg`,
-        message: getRandomArrayElement(MASSAGES),
-        name: getRandomArrayElement(NAMES)
-      }
-    });
-  }
-
-  return arr;
+    comments: Array.from({length: randomInt(1, 5)}, createComments)
+  };
 };
 
 
-createPhotoSpecification();
+
+const arryaPhoto = Array.from({ length: SIMILAR_PHOTOSPECIFICATION_COUNT - 1 }, createPhotoSpecification);
+
+
+console.log(arryaPhoto);
 
 
 // проверяет длинну коментария
