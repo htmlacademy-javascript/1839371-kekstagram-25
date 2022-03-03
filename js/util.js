@@ -8,13 +8,15 @@ const randomInt = function (min, max) {
     throw new Error('Диапазон задан некорректно');
 
   } catch (e) {
-}
-}
+      console.log(e);
+  }
+
+};
 
 // выбирает рандомный элемент из переданного массиива
-const getRandomArrayElement = (elem) => {
+const getRandomArrayElement = elem => {
   return elem[randomInt(0, elem.length - 1)];
-}
+};
 
 // возвращает и удаляет рандомыный элемент из массива
 function getRandomId(arr) {

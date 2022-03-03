@@ -1,4 +1,4 @@
-import { randomInt, getRandomArrayElement, getRandomId } from "./util.js";
+import { randomInt, getRandomArrayElement, getRandomId } from './util.js';
 
 const NAMES = [
   'Иван',
@@ -35,7 +35,7 @@ const createComments = () => ({
 
 // создает обьект описания фото с комментариями
 const createPhotoSpecification = () => {
-  const id = getRandomId(usersId)
+  const id = getRandomId(usersId);
   return {
     id: id,
     url: `photos/${id}.jpg`,
