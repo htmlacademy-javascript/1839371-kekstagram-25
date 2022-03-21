@@ -13,7 +13,7 @@ const socialCommentCount = document.querySelector('.social__comment-count');
 const commentsCount = socialCommentCount.querySelector('.comments-count');
 const socialComments = document.querySelector('.social__comments');
 const commentsLoader = document.querySelector('.comments-loader');
-const body = document.querySelector('body');
+const bodyElement = document.querySelector('body');
 
 // навесил обработчик открытия попапа по клику на миниатюру
 const addThumbnailClickHandler = function (thumbnail) {
@@ -42,7 +42,7 @@ const addThumbnailClickHandler = function (thumbnail) {
 
     socialCommentCount.classList.add('hidden');
     commentsLoader.classList.add('hidden');
-    body.classList.add('modal-open');
+    bodyElement.classList.add('modal-open');
   });
 };
 
@@ -54,15 +54,14 @@ for (let thumbnail of thumbnails) {
 // закрытие попапа по нажатию на крестик
 bigPictureClose.addEventListener('click', () => {
   bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
+  bodyElement.classList.remove('modal-open');
 });
 
 // закрытие попапа по нажатию на Esc
 document.addEventListener('keydown', (evt) => {
   if(evt.key === 'Escape') {
     bigPicture.classList.add('hidden');
-    body.classList.remove('modal-open');
+    bodyElement.classList.remove('modal-open');
   }
 });
-
 
