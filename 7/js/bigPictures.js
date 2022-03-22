@@ -47,7 +47,7 @@ const addThumbnailClickHandler = function (thumbnail) {
 };
 
 // создал замыкание для выбора миниатюр
-for (let thumbnail of thumbnails) {
+for (const thumbnail of thumbnails) {
   addThumbnailClickHandler(thumbnail);
 }
 

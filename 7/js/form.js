@@ -6,7 +6,7 @@ const form = document.querySelector('.img-upload__form');
 const textDescriptionElement = document.querySelector('.text__description');
 const textHashtagsElement = document.querySelector('.text__hashtags');
 const bodyElement = document.querySelector('body');
-const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
+const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,100}$/;
 
 // открытие модального окна
 uploadFileElement.addEventListener('click', () => {
@@ -18,6 +18,7 @@ uploadFileElement.addEventListener('click', () => {
 imgUploadCancelElement.addEventListener('click', () => {
   imgUploadOverlayElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
+  form.resete();
 });
 
 // скрытие модального окна Esc (при нахождении в поле ввода в комментарии или хештеге не сработает)
@@ -28,6 +29,7 @@ document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
       imgUploadOverlayElement.classList.add('hidden');
       bodyElement.classList.remove('modal-open');
+      form.resete();
     }
   }
 });
@@ -45,13 +47,43 @@ const pristine = new Pristine(form, {
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
-  for (let hashtag of arrayHashtags) {
+  for (const hashtag of arrayHashtags) {
     if (!re.test(hashtag) && hashtag !== '') {
       return false;
     }
   }
   return true;
 }, 'Строка после решётки должна состоять из букв и чисел');
+
+pristine.addValidator(textHashtagsElement, () => {
+  const arrayHashtags = textHashtagsElement.value.split(' ');
+  for (const hashtag of arrayHashtags) {
+    if (hashtag[0] !== '#') {
+      return false;
+    }
+  }
+  return true;
+}, 'Хештег должен начинаться с решетки');
+
+pristine.addValidator(textHashtagsElement, () => {
+  const arrayHashtags = textHashtagsElement.value.split(' ');
+  for (const hashtag of arrayHashtags) {
+    if (hashtag === '#') {
+      return false;
+    }
+  }
+  return true;
+}, 'Хештег должен содержать не только решетку');
+
+pristine.addValidator(textHashtagsElement, () => {
+  const arrayHashtags = textHashtagsElement.value.split(' ');
+  for (const hashtag of arrayHashtags) {
+    if (hashtag.length > 20) {
+      return false;
+    }
+  }
+  return true;
+}, 'Хештег не должен быть длинее 20 символов');
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
