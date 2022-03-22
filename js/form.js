@@ -18,7 +18,7 @@ uploadFileElement.addEventListener('click', () => {
 imgUploadCancelElement.addEventListener('click', () => {
   imgUploadOverlayElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
-  form.resete();
+  form.reset();
 });
 
 // скрытие модального окна Esc (при нахождении в поле ввода в комментарии или хештеге не сработает)
@@ -29,7 +29,7 @@ document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
       imgUploadOverlayElement.classList.add('hidden');
       bodyElement.classList.remove('modal-open');
-      form.resete();
+      form.reset();
     }
   }
 });
