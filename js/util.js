@@ -1,16 +1,6 @@
 // генерирует случайное число в диапазоне min-max
 const randomInt = function (min, max) {
-  try {
-    if (min >= 0 && min <= max) {
-      return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + min;
-    }
-
-    throw new Error('Диапазон задан некорректно');
-
-  } catch (e) {
-    console.log(e);
-  }
-
+  return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + min;
 };
 
 // выбирает рандомный элемент из переданного массиива
