@@ -40,11 +40,52 @@ const addThumbnailClickHandler = function (thumbnail) {
 
     socialCaption.textContent = similarPhotos.find((photo) => String(photo.id) === id).description;
 
-    socialCommentCount.classList.add('hidden');
-    commentsLoader.classList.add('hidden');
+    // показ комментариев по 5 штук
+    const socialComment = socialComments.querySelectorAll('.social__comment');
+
+    for (let i = 5; i < socialComment.length; i++) {                    //скрываем с 6го комментария
+      socialComment[i].style.display = 'none';
+    }
+
+    if (socialComment.length > 5) {                                     // если комментариев больше 5
+      let countComment = 5;                                                  // заводим счетчик комментариев
+      socialCommentCount.textContent = `${countComment} из ${socialComment.length} комментариев`;
+
+      const listenerComment = function () {
+        countComment += 5;
+        if (countComment <= socialComment.length) {                      // если счетчик меньше кол-ва коментариев
+          for (let i = 0; i < countComment; i++) {
+            socialComment[i].style.display = null;                       // показываем еще 5
+          }
+          socialCommentCount.textContent = `${countComment} из ${socialComment.length} комментариев`;
+        }
+
+        if (countComment >= socialComment.length) {                       // если счетчик больше или равен кол-ву коментариев
+          for (let i = 0; i < socialComment.length; i++) {
+            socialComment[i].style.display = null;                         // показываем оставшиеся
+            commentsLoader.classList.add('hidden');                         // скрываем кнопку
+            commentsLoader.removeEventListener('click', listenerComment);  // удаляем обработчик
+          }
+          socialCommentCount.textContent = `${socialComment.length} из ${commentsCount.textContent} комментарияев`;
+        }
+      };
+
+      commentsLoader.addEventListener('click', listenerComment);
+      commentsLoader.classList.remove('hidden');
+
+    } else {
+      commentsLoader.classList.add('hidden');
+      if (socialComment.length > 1) {
+        socialCommentCount.textContent = `${socialComment.length} из ${socialComment.length} комментариев`;
+      } else {
+        socialCommentCount.textContent = `${socialComment.length} из ${socialComment.length} комментария`;
+      }
+    }
+
     bodyElement.classList.add('modal-open');
   });
 };
+
 
 // создал замыкание для выбора миниатюр
 for (const thumbnail of thumbnails) {
@@ -55,6 +96,7 @@ for (const thumbnail of thumbnails) {
 bigPictureClose.addEventListener('click', () => {
   bigPicture.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
+
 });
 
 // закрытие попапа по нажатию на Esc
