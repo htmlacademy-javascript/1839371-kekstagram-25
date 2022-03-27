@@ -42,7 +42,7 @@ const createPhotoSpecification = () => {
     description: `foto №${id}`,
     likes: randomInt(15, 200),
 
-    comments: Array.from({length: randomInt(1, 5)}, createComments)
+    comments: Array.from({length: randomInt(1, 20)}, createComments)
   };
 };
 
