@@ -1,4 +1,4 @@
-import { similarPhotos } from './pictures.js';
+import { renderSimularList } from './pictures.js';
 
 // Отрисовка полноразмерного изибражения
 
@@ -26,7 +26,7 @@ const addThumbnailClickHandler = function (thumbnail) {
     const id = thumbnail.querySelector('img').getAttribute('id');
     socialComments.innerHTML = '';
 
-    similarPhotos.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
+    renderSimularList.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
       bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
             <li class="social__comment">
               <img
@@ -38,7 +38,7 @@ const addThumbnailClickHandler = function (thumbnail) {
             </li>`);
     });
 
-    socialCaption.textContent = similarPhotos.find((photo) => String(photo.id) === id).description;
+    socialCaption.textContent = renderSimularList.find((photo) => String(photo.id) === id).description;
 
     // показ комментариев по 5 штук
     const socialComment = socialComments.querySelectorAll('.social__comment');
