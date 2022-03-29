@@ -30,5 +30,5 @@ fetch('https://25.javascript.pages.academy/kekstagram/data')
   });
 
 
-export {renderSimularList};
+//export {renderSimularList};
 
