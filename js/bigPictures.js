@@ -1,14 +1,11 @@
-//import { renderSimularList } from './pictures.js';
-
+import { getData } from './load.js';
 
 const pictures = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-//const similarPhotos = createPhotos();
 
 // Отрисовка полноразмерного изибражения
 
 const bigPicture = document.querySelector('.big-picture ');
-const thumbnails = document.querySelectorAll('.picture');
 const bigPictureClose = document.querySelector('.big-picture__cancel');
 const bigPictureImj = document.querySelector('#big-picture__img'); // добавил id на img полноэкранного режима
 const bigPictureSocial = document.querySelector('.big-picture__social');
@@ -36,6 +33,7 @@ const renderSimularList = (similarPhotos) => {
 
   pictures.appendChild(similarPicturesFragment);
 
+  const thumbnails = document.querySelectorAll('.picture');
   // навесил обработчик открытия попапа по клику на миниатюру
   const addThumbnailClickHandler = function (thumbnail) {
     thumbnail.addEventListener('click', () => {
@@ -47,7 +45,7 @@ const renderSimularList = (similarPhotos) => {
       const id = thumbnail.querySelector('img').getAttribute('id');
       socialComments.innerHTML = '';
 
-      renderSimularList.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
+      similarPhotos.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
         bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
             <li class="social__comment">
               <img
@@ -59,7 +57,7 @@ const renderSimularList = (similarPhotos) => {
             </li>`);
       });
 
-      socialCaption.textContent = renderSimularList.find((photo) => String(photo.id) === id).description;
+      socialCaption.textContent = similarPhotos.find((photo) => String(photo.id) === id).description;
 
       // показ комментариев по 5 штук
       const socialComment = socialComments.querySelectorAll('.social__comment');
@@ -107,21 +105,15 @@ const renderSimularList = (similarPhotos) => {
     });
   };
 
-
   // создал замыкание для выбора миниатюр
   for (const thumbnail of thumbnails) {
     addThumbnailClickHandler(thumbnail);
   }
-
 };
 
-fetch('https://25.javascript.pages.academy/kekstagram/data')
-  .then((response) => response.json())
-  .then((photos) => {
-    console.log(photos)
-    renderSimularList(photos);
-  });
+const loadPhotos = getData(renderSimularList, console.error);
 
+loadPhotos();
 
 // закрытие попапа по нажатию на крестик
 bigPictureClose.addEventListener('click', () => {
