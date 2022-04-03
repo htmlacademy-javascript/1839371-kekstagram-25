@@ -1,3 +1,5 @@
+import {showAlertSuccess, showAlertError } from './util.js';
+
 // открытие и валидация формы загрузки фото
 const imgUploadOverlayElement = document.querySelector('.img-upload__overlay');
 const uploadFileElement = document.querySelector('#upload-file');
@@ -16,6 +18,13 @@ const imgUploadPreviewElement = document.querySelector('#img-upload__preview');
 const effectsRadioElements = document.querySelectorAll('.effects__radio');
 const imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
 const effectLevelValue = imgUploadEffectLevelElement.querySelector('.effect-level__value');
+
+const errorElement = document.querySelector('#error').content.querySelector('.error');
+const successElement = document.querySelector('#success').content.querySelector('.success');
+const successButtonElement = document.querySelector('#success').content.querySelector('.success__button');
+const errorButtonElement = document.querySelector('#error').content.querySelector('.error__button');
+const errorInnerElement = document.querySelector('#error').content.querySelector('.error__inner');
+const successInnerElement = document.querySelector('#success').content.querySelector('.success__inner');
 
 // открытие модального окна
 uploadFileElement.addEventListener('click', () => {
@@ -185,6 +194,39 @@ document.addEventListener('keydown', (evt) => {
   }
 });
 
+//закрытия сообщения об ошибке отправки
+const closeErrorClickButton = () => errorButtonElement.addEventListener('click', () => {
+  errorElement.classList.add('hidden');
+});
+
+const closeErrorClickBody = () => document.addEventListener('click', (evt) => {
+  if (!errorInnerElement.contains(evt.target)){
+    errorElement.classList.add('hidden');
+  }
+});
+
+document.addEventListener('keydown', (evt) => {
+  if(evt.key === 'Escape') {
+    errorElement.classList.add('hidden');
+  }
+});
+
+//закрытия сообщения об успешной отправки
+const closeSuccessClickButton = () => successButtonElement.addEventListener('click', () => {
+  successElement.classList.add('hidden');
+});
+
+const closeSuccessClickBody = () => document.addEventListener('click', (evt) => {
+  if (!successInnerElement.contains(evt.target)){
+    successElement.classList.add('hidden');
+  }
+});
+
+document.addEventListener('keydown', (evt) => {
+  if(evt.key === 'Escape') {
+    successElement.classList.add('hidden');
+  }
+});
 
 //валидация хештега
 const pristine = new Pristine(form, {
@@ -209,7 +251,7 @@ pristine.addValidator(textHashtagsElement, () => {
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
   for (const hashtag of arrayHashtags) {
-    if (hashtag[0] !== '#') {
+    if (hashtag[0] !== '#' && hashtag.length !== 0) {
       return false;
     }
   }
@@ -259,7 +301,43 @@ pristine.addValidator(textHashtagsElement, () => {
 
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
-});
 
+  const isValid = pristine.validate();
+
+  if (isValid) {
+
+    const formData = new FormData(evt.target);
+
+    fetch(
+      'https://25.javascript.pages.academy/kekstagram',
+      //'https://25.javascript.pages.academy/404',
+      {
+        method: 'POST',
+        body: formData,
+      },
+    ).then((response) => {
+      if (response.ok) {
+        showAlertSuccess();
+        imgUploadOverlayElement.classList.add('hidden');
+        bodyElement.classList.remove('modal-open');
+        form.reset();
+        successElement.classList.remove('hidden');
+        closeSuccessClickButton();
+        closeSuccessClickBody();
+      } else {
+        showAlertError();
+        imgUploadOverlayElement.classList.add('hidden');
+        bodyElement.classList.remove('modal-open');
+        form.reset();
+        errorElement.classList.remove('hidden');
+        closeErrorClickBody();
+        closeErrorClickButton();
+      }
+
+    })
+      .catch(() => {
+        showAlertError();
+      });
+  }
+});
 

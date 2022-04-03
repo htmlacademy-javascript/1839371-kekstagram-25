@@ -1,24 +1,17 @@
-// генерирует случайное число в диапазоне min-max
-const randomInt = function (min, max) {
-  return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + min;
+// сообщение об ошибки отправки сообщения
+const showAlertError = () => {
+
+  const alertContainer = document.querySelector('#error').content.querySelector('.error');
+  document.body.append(alertContainer);
+
 };
 
-// выбирает рандомный элемент из переданного массиива
-const getRandomArrayElement = (elem) => elem[randomInt(0, elem.length - 1)];
+//сообщение при удачной отправки сообщения
+const showAlertSuccess = () => {
 
-// возвращает и удаляет рандомыный элемент из массива
-function getRandomId(arr) {
-  const i = randomInt(0, arr.length - 1);
-  const randomId = arr[i];
-  arr.splice(i, 1);
-  return randomId;
-}
+  const alertContainer = document.querySelector('#success').content.querySelector('.success');
+  document.body.append(alertContainer);
 
-export {randomInt, getRandomArrayElement, getRandomId};
-
-// проверяет длинну коментария
-const isCommentMaxLengthExceeded = function (str = '', maxLegth = 140) {
-  return str.length <= maxLegth;
 };
 
-isCommentMaxLengthExceeded();
+export {showAlertSuccess, showAlertError};
