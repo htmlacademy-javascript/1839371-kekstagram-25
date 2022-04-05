@@ -14,4 +14,14 @@ const showAlertSuccess = () => {
 
 };
 
-export {showAlertSuccess, showAlertError};
+//устранение дребезга
+
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export {showAlertSuccess, showAlertError, debounce};
