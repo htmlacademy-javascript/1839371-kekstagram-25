@@ -1,18 +1,20 @@
-const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const pictureTemplateElement = document.querySelector('#picture').content.querySelector('.picture');
 
-const similarPicturesFragment = document.createDocumentFragment();
-const similar = function(photos) {
+function createThumbnails(photos) {
+  const simularPictureFragment = document.createDocumentFragment();
+
   photos.forEach(({url, comments, likes, id}) => {
-    const pictureElement = pictureTemplate.cloneNode(true);
+    const pictureElement = pictureTemplateElement.cloneNode(true);
 
     pictureElement.querySelector('.picture__img').src = url;
     pictureElement.querySelector('.picture__comments').textContent = comments.length;
     pictureElement.querySelector('.picture__likes').textContent = likes;
-    pictureElement.querySelector('.picture__img').id = id;                       // добавил id для выбора миниатюры
+    pictureElement.querySelector('.picture__img').id = id;
 
-    return similarPicturesFragment.appendChild(pictureElement);
-  });
-};
+    simularPictureFragment.appendChild(pictureElement);
+  }) ;
 
+  return simularPictureFragment;
+}
 
-export {similar};
+export {createThumbnails};
