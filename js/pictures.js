@@ -1,33 +1,20 @@
-//import {createPhotos} from './data.js';
+const pictureTemplateElement = document.querySelector('#picture').content.querySelector('.picture');
 
+function createThumbnails(photos) {
+  const simularPictureFragment = document.createDocumentFragment();
 
-const pictures = document.querySelector('.pictures');
-const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-//const similarPhotos = createPhotos();
-
-const renderSimularList = (similarPhotos) => {
-  const similarPicturesFragment = document.createDocumentFragment();
-
-  similarPhotos.forEach(({url, comments, likes, id}) => {
-    const pictureElement = pictureTemplate.cloneNode(true);
+  photos.forEach(({url, comments, likes, id}) => {
+    const pictureElement = pictureTemplateElement.cloneNode(true);
 
     pictureElement.querySelector('.picture__img').src = url;
     pictureElement.querySelector('.picture__comments').textContent = comments.length;
     pictureElement.querySelector('.picture__likes').textContent = likes;
-    pictureElement.querySelector('.picture__img').id = id;                       // добавил id для выбора миниатюры
+    pictureElement.querySelector('.picture__img').id = id;
 
-    similarPicturesFragment.appendChild(pictureElement);
-  });
+    simularPictureFragment.appendChild(pictureElement);
+  }) ;
 
-  pictures.appendChild(similarPicturesFragment);
-};
+  return simularPictureFragment;
+}
 
-fetch('https://25.javascript.pages.academy/kekstagram/data')
-  .then((response) => response.json())
-  .then((photos) => {
-    renderSimularList(photos);
-  });
-
-
-//export {renderSimularList};
-
+export {createThumbnails};

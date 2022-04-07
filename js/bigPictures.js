@@ -1,132 +1,178 @@
 import { getData } from './load.js';
+import { createThumbnails } from './pictures.js';
+import { debounce } from './util.js';
 
-const pictures = document.querySelector('.pictures');
-const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+const picturesElement = document.querySelector('.pictures');
 
-// Отрисовка полноразмерного изибражения
-
-const bigPicture = document.querySelector('.big-picture ');
-const bigPictureClose = document.querySelector('.big-picture__cancel');
-const bigPictureImj = document.querySelector('#big-picture__img'); // добавил id на img полноэкранного режима
-const bigPictureSocial = document.querySelector('.big-picture__social');
-const likesCount = bigPictureSocial.querySelector('.likes-count');
-const socialCaption = bigPictureSocial.querySelector('.social__caption');
-const socialCommentCount = document.querySelector('.social__comment-count');
-const commentsCount = socialCommentCount.querySelector('.comments-count');
-const socialComments = document.querySelector('.social__comments');
-const commentsLoader = document.querySelector('.comments-loader');
+// отрисовка полноразмерного изображения
+const bigPictureElement = document.querySelector('.big-picture');
+const bigPictureCloseElement = document.querySelector('.big-picture__cancel');
+const bigPictureImgElement = document.querySelector('#big-picture__img');
+const bigPictureSocialElement = document.querySelector('.big-picture__social');
+const likesCountElement = bigPictureSocialElement.querySelector('.likes-count');
+const socialCaptionElement = bigPictureSocialElement.querySelector('.social__caption');
+const socialCommentCountElement = document.querySelector('.social__comment-count');
+const commentsCountElement = socialCommentCountElement.querySelector('.comments-count');
+const socialCommentsElement = document.querySelector('.social__comments');
+const commentsLoaderElement = document.querySelector('.comments-loader');
 const bodyElement = document.querySelector('body');
 
-const renderSimularList = (similarPhotos) => {
-  const similarPicturesFragment = document.createDocumentFragment();
+const imgFiltersElement = document.querySelector('.img-filters');
+imgFiltersElement.classList.remove('img-filters--inactive');
+const filtersForm = document.querySelector('.img-filters__form');
 
-  similarPhotos.forEach(({url, comments, likes, id}) => {
-    const pictureElement = pictureTemplate.cloneNode(true);
+const filterDefaultElement = document.querySelector('#filter-default');
+const filterRandomElement = document.querySelector('#filter-random');
+const filterDiscussedElement = document.querySelector('#filter-discussed');
 
-    pictureElement.querySelector('.picture__img').src = url;
-    pictureElement.querySelector('.picture__comments').textContent = comments.length;
-    pictureElement.querySelector('.picture__likes').textContent = likes;
-    pictureElement.querySelector('.picture__img').id = id;                       // добавил id для выбора миниатюры
+function setupComments() {
+  const socialCommentElement = socialCommentsElement.querySelectorAll('.social__comment');
 
-    similarPicturesFragment.appendChild(pictureElement);
-  });
+  for (let i = 5; i < socialCommentElement.length; i++) {
+    socialCommentElement[i].style.display = 'none';
+  }
 
-  pictures.appendChild(similarPicturesFragment);
+  if (socialCommentElement.length > 5) {
+    let countComment = 5;
+    socialCommentCountElement.textContent = `${countComment} из ${socialCommentElement.length} комментариев`;
 
-  const thumbnails = document.querySelectorAll('.picture');
-  // навесил обработчик открытия попапа по клику на миниатюру
-  const addThumbnailClickHandler = function (thumbnail) {
-    thumbnail.addEventListener('click', () => {
-      bigPicture.classList.remove('hidden');
-      bigPictureImj.src = thumbnail.querySelector('img').getAttribute('src');
-      likesCount.textContent = thumbnail.querySelector('.picture__likes').textContent;
-      commentsCount.textContent = thumbnail.querySelector('.picture__comments').textContent;
-
-      const id = thumbnail.querySelector('img').getAttribute('id');
-      socialComments.innerHTML = '';
-
-      similarPhotos.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
-        bigPicture.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
-            <li class="social__comment">
-              <img
-                class="social__picture"
-                src="${avatar}"
-                alt="${name}"
-                width="35" height="35">
-              <p class="social__text">${message}</p>
-            </li>`);
-      });
-
-      socialCaption.textContent = similarPhotos.find((photo) => String(photo.id) === id).description;
-
-      // показ комментариев по 5 штук
-      const socialComment = socialComments.querySelectorAll('.social__comment');
-
-      for (let i = 5; i < socialComment.length; i++) {                    //скрываем с 6го комментария
-        socialComment[i].style.display = 'none';
-      }
-
-      if (socialComment.length > 5) {                                     // если комментариев больше 5
-        let countComment = 5;                                                  // заводим счетчик комментариев
-        socialCommentCount.textContent = `${countComment} из ${socialComment.length} комментариев`;
-
-        const listenerComment = function () {
-          countComment += 5;
-          if (countComment <= socialComment.length) {                      // если счетчик меньше кол-ва коментариев
-            for (let i = 0; i < countComment; i++) {
-              socialComment[i].style.display = null;                       // показываем еще 5
-            }
-            socialCommentCount.textContent = `${countComment} из ${socialComment.length} комментариев`;
-          }
-
-          if (countComment >= socialComment.length) {                       // если счетчик больше или равен кол-ву коментариев
-            for (let i = 0; i < socialComment.length; i++) {
-              socialComment[i].style.display = null;                         // показываем оставшиеся
-              commentsLoader.classList.add('hidden');                         // скрываем кнопку
-              commentsLoader.removeEventListener('click', listenerComment);  // удаляем обработчик
-            }
-            socialCommentCount.textContent = `${socialComment.length} из ${commentsCount.textContent} комментарияев`;
-          }
-        };
-
-        commentsLoader.addEventListener('click', listenerComment);
-        commentsLoader.classList.remove('hidden');
-
-      } else {
-        commentsLoader.classList.add('hidden');
-        if (socialComment.length > 1) {
-          socialCommentCount.textContent = `${socialComment.length} из ${socialComment.length} комментариев`;
-        } else {
-          socialCommentCount.textContent = `${socialComment.length} из ${socialComment.length} комментария`;
+    const listenerComment = function () {
+      countComment += 5;
+      if (countComment <= socialCommentElement.length) {
+        for (let i = 0; i < countComment; i++) {
+          socialCommentElement[i].style.display = null;
         }
+        socialCommentCountElement.textContent = `${countComment} из ${socialCommentElement.length} комментариев`;
       }
 
-      bodyElement.classList.add('modal-open');
-    });
-  };
+      if (countComment >= socialCommentElement.length) {
+        for (let i = 0; i < socialCommentElement.length; i++) {
+          socialCommentElement[i].style.display = null;
+          commentsLoaderElement.classList.add('hidden');
+          commentsLoaderElement.removeEventListener('click', listenerComment);
+        }
+        socialCommentCountElement.textContent = `${socialCommentElement.length} из ${commentsCountElement.textContent} комментарияев`;
+      }
+    };
 
-  // создал замыкание для выбора миниатюр
+    commentsLoaderElement.addEventListener('click', listenerComment);
+    commentsLoaderElement.classList.remove('hidden');
+
+  } else {
+    commentsLoaderElement.classList.add('hidden');
+    if (socialCommentElement.length > 1) {
+      socialCommentCountElement.textContent = `${socialCommentElement.length} из ${socialCommentElement.length} комментариев`;
+    } else {
+      socialCommentCountElement.textContent = `${socialCommentElement.length} из ${socialCommentElement.length} комментария`;
+    }
+  }
+}
+
+const addThumbnailClickHandler = function (thumbnail, similarPhotos) {
+  thumbnail.addEventListener('click', () => {
+    bigPictureElement.classList.remove('hidden');
+    bigPictureImgElement.src = thumbnail.querySelector('img').getAttribute('src');
+    likesCountElement.textContent = thumbnail.querySelector('.picture__likes').textContent;
+    commentsCountElement.textContent = thumbnail.querySelector('.picture__comments').textContent;
+
+    const id = thumbnail.querySelector('img').getAttribute('id');
+    socialCommentsElement.innerHTML = '';
+
+    similarPhotos.find((photo) => String(photo.id) === id).comments.forEach(({avatar, name, message}) => {
+      bigPictureElement.querySelector('.social__comments').insertAdjacentHTML('beforeend', `
+          <li class="social__comment">
+            <img
+              class="social__picture"
+              src="${avatar}"
+              alt="${name}"
+              width="35" height="35">
+            <p class="social__text">${message}</p>
+          </li>`);
+    });
+
+    socialCaptionElement.textContent = similarPhotos.find((photo) => String(photo.id) === id).description;
+    setupComments();
+
+    bodyElement.classList.add('modal-open');
+  });
+};
+
+let photos = [];
+
+const renderSimularList = (similarPhotos) => {
+  const similarPicturesFragment = createThumbnails(similarPhotos);
+  picturesElement.appendChild(similarPicturesFragment);
+  const thumbnails = document.querySelectorAll('.picture');
+
   for (const thumbnail of thumbnails) {
-    addThumbnailClickHandler(thumbnail);
+    addThumbnailClickHandler(thumbnail, similarPhotos);
   }
 };
 
-const loadPhotos = getData(renderSimularList, console.error);
+const loadPhotos = getData((similarPhotos) => {
+  photos = similarPhotos;
+  renderSimularList(photos);
+}, console.error);
 
 loadPhotos();
 
-// закрытие попапа по нажатию на крестик
-bigPictureClose.addEventListener('click', () => {
-  bigPicture.classList.add('hidden');
+//закрытие попапа по нажатию на крестик
+bigPictureCloseElement.addEventListener('click', () => {
+  bigPictureElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
-
 });
 
 // закрытие попапа по нажатию на Esc
-document.addEventListener('keydown', (evt) => {
+document.addEventListener('click', (evt) => {
   if(evt.key === 'Escape') {
-    bigPicture.classList.add('hidden');
+    bigPictureElement.classList.add('hidden');
     bodyElement.classList.remove('modal-open');
   }
 });
 
+//функция сортировки для получения популярных коментариев
+const comparePhoto = (photoA, photoB) => {
+  const rancA = photoA.comments.length;
+  const rancB = photoB.comments.length;
+
+  return rancB - rancA;
+};
+
+//функция получения массива случайных комментариев
+const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+
+const filterClickHandler = debounce((evt) => {
+  const activeButtonElement = document.querySelector('.img-filters__button--active');
+
+  if (evt.targer === activeButtonElement) {
+    return;
+  }
+
+  filterRandomElement.classList.remove('img-filters__button--active');
+  filterDefaultElement.classList.remove('img-filters__button--active');
+  filterDiscussedElement.classList.remove('img-filters__button--active');
+
+  evt.target.classList.add('img-filters__button--active');
+
+  //удаляем старые картинки
+  const picture = picturesElement.querySelectorAll('.picture');
+  picture.forEach((pic) => {pic.remove();});
+
+  //pictures.innerHTML = ''
+
+  let newPhotos = [];
+
+  if (evt.target.id === 'filter-default') {
+    newPhotos = [...photos];
+  } else if (evt.target.id === 'filter-discussed') {
+    newPhotos = photos.slice().sort(comparePhoto);
+  } else if (evt.target.id === 'filter-random') {
+    const newPhotosArr = [...photos];
+    newPhotos = shuffle(newPhotosArr).slice(0, 10);
+  }
+
+  renderSimularList(newPhotos);
+
+});
+
+filtersForm.addEventListener('click', filterClickHandler);
