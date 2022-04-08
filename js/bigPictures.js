@@ -1,6 +1,6 @@
 import { getData } from './load.js';
 import { createThumbnails } from './pictures.js';
-import { debounce } from './util.js';
+import { debounce, showAlertErrorGetData} from './util.js';
 
 const picturesElement = document.querySelector('.pictures');
 
@@ -112,7 +112,7 @@ const renderSimularList = (similarPhotos) => {
 const loadPhotos = getData((similarPhotos) => {
   photos = similarPhotos;
   renderSimularList(photos);
-}, console.error);
+}, showAlertErrorGetData);
 
 loadPhotos();
 
