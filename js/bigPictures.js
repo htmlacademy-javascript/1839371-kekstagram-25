@@ -18,7 +18,6 @@ const commentsLoaderElement = document.querySelector('.comments-loader');
 const bodyElement = document.querySelector('body');
 
 const imgFiltersElement = document.querySelector('.img-filters');
-imgFiltersElement.classList.remove('img-filters--inactive');
 const filtersForm = document.querySelector('.img-filters__form');
 
 const filterDefaultElement = document.querySelector('#filter-default');
@@ -112,6 +111,7 @@ const renderSimularList = (similarPhotos) => {
 const loadPhotos = getData((similarPhotos) => {
   photos = similarPhotos;
   renderSimularList(photos);
+  imgFiltersElement.classList.remove('img-filters--inactive');
 }, showAlertErrorGetData);
 
 loadPhotos();
