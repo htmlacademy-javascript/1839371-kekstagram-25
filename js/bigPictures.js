@@ -1,6 +1,6 @@
 import { getData } from './load.js';
 import { createThumbnails } from './pictures.js';
-import { debounce } from './util.js';
+import { debounce, showAlertErrorGetData} from './util.js';
 
 const picturesElement = document.querySelector('.pictures');
 
@@ -18,7 +18,6 @@ const commentsLoaderElement = document.querySelector('.comments-loader');
 const bodyElement = document.querySelector('body');
 
 const imgFiltersElement = document.querySelector('.img-filters');
-imgFiltersElement.classList.remove('img-filters--inactive');
 const filtersForm = document.querySelector('.img-filters__form');
 
 const filterDefaultElement = document.querySelector('#filter-default');
@@ -112,7 +111,8 @@ const renderSimularList = (similarPhotos) => {
 const loadPhotos = getData((similarPhotos) => {
   photos = similarPhotos;
   renderSimularList(photos);
-}, console.error);
+  imgFiltersElement.classList.remove('img-filters--inactive');
+}, showAlertErrorGetData);
 
 loadPhotos();
 

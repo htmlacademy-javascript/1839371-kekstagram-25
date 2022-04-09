@@ -1,4 +1,4 @@
-const getData = (onSuccess, onError) => () => fetch(
+const getData = (onSuccess, showAlertErrorGetData) => () => fetch(
   'https://25.javascript.pages.academy/kekstagram/data',
   {
     method: 'GET',
@@ -15,8 +15,8 @@ const getData = (onSuccess, onError) => () => fetch(
   .then((photos) => {
     onSuccess(photos);
   })
-  .catch((err) => {
-    onError(err);
+  .catch(() => {
+    showAlertErrorGetData('Не удалось загрузить фото');
   });
 
 export {getData};
