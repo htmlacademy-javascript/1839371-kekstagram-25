@@ -25,44 +25,46 @@ const filterRandomElement = document.querySelector('#filter-random');
 const filterDiscussedElement = document.querySelector('#filter-discussed');
 
 function setupComments() {
-  const socialCommentElement = socialCommentsElement.querySelectorAll('.social__comment');
+  const socialCommentsElements = socialCommentsElement.querySelectorAll('.social__comment');
 
-  for (let i = 5; i < socialCommentElement.length; i++) {
-    socialCommentElement[i].style.display = 'none';
+  const MAX_COUNT_COMMENT = 5;
+
+  for (let i = MAX_COUNT_COMMENT; i < socialCommentsElements.length; i++) {
+    socialCommentsElements[i].style.display = 'none';
   }
 
-  if (socialCommentElement.length > 5) {
+  if (socialCommentsElements.length > MAX_COUNT_COMMENT) {
     let countComment = 5;
-    socialCommentCountElement.textContent = `${countComment} из ${socialCommentElement.length} комментариев`;
+    socialCommentCountElement.textContent = `${countComment} из ${socialCommentsElements.length} комментариев`;
 
-    const listenerComment = function () {
+    const commentsLoaderClickHandler = function () {
       countComment += 5;
-      if (countComment <= socialCommentElement.length) {
+      if (countComment < socialCommentsElements.length) {
         for (let i = 0; i < countComment; i++) {
-          socialCommentElement[i].style.display = null;
+          socialCommentsElements[i].style.display = null;
         }
-        socialCommentCountElement.textContent = `${countComment} из ${socialCommentElement.length} комментариев`;
+        socialCommentCountElement.textContent = `${countComment} из ${socialCommentsElements.length} комментариев`;
       }
 
-      if (countComment >= socialCommentElement.length) {
-        for (let i = 0; i < socialCommentElement.length; i++) {
-          socialCommentElement[i].style.display = null;
+      if (countComment >= socialCommentsElements.length) {
+        for (let i = 0; i < socialCommentsElements.length; i++) {
+          socialCommentsElements[i].style.display = null;
           commentsLoaderElement.classList.add('hidden');
-          commentsLoaderElement.removeEventListener('click', listenerComment);
+          commentsLoaderElement.removeEventListener('click', commentsLoaderClickHandler);
         }
-        socialCommentCountElement.textContent = `${socialCommentElement.length} из ${commentsCountElement.textContent} комментарияев`;
+        socialCommentCountElement.textContent = `${socialCommentsElements.length} из ${commentsCountElement.textContent} комментариев`;
       }
     };
 
-    commentsLoaderElement.addEventListener('click', listenerComment);
+    commentsLoaderElement.addEventListener('click', commentsLoaderClickHandler);
     commentsLoaderElement.classList.remove('hidden');
 
   } else {
     commentsLoaderElement.classList.add('hidden');
-    if (socialCommentElement.length > 1) {
-      socialCommentCountElement.textContent = `${socialCommentElement.length} из ${socialCommentElement.length} комментариев`;
+    if (socialCommentsElements.length > 1) {
+      socialCommentCountElement.textContent = `${socialCommentsElements.length} из ${socialCommentsElements.length} комментариев`;
     } else {
-      socialCommentCountElement.textContent = `${socialCommentElement.length} из ${socialCommentElement.length} комментария`;
+      socialCommentCountElement.textContent = `${socialCommentsElements.length} из ${socialCommentsElements.length} комментария`;
     }
   }
 }
@@ -141,10 +143,10 @@ const comparePhoto = (photoA, photoB) => {
 //функция получения массива случайных комментариев
 const shuffle = (array) => array.sort(() => Math.random() - 0.5);
 
-const filterClickHandler = debounce((evt) => {
+const filtersFormClickHandler = debounce((evt) => {
   const activeButtonElement = document.querySelector('.img-filters__button--active');
 
-  if (evt.targer === activeButtonElement) {
+  if (evt.target === activeButtonElement) {
     return;
   }
 
@@ -167,12 +169,12 @@ const filterClickHandler = debounce((evt) => {
   } else if (evt.target.id === 'filter-discussed') {
     newPhotos = photos.slice().sort(comparePhoto);
   } else if (evt.target.id === 'filter-random') {
-    const newPhotosArr = [...photos];
-    newPhotos = shuffle(newPhotosArr).slice(0, 10);
+    newPhotos = [...photos];
+    newPhotos = shuffle(newPhotos).slice(0, 10);
   }
 
   renderSimularList(newPhotos);
 
 });
 
-filtersForm.addEventListener('click', filterClickHandler);
+filtersForm.addEventListener('click', filtersFormClickHandler);

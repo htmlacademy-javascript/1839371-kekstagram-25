@@ -4,14 +4,14 @@ import {showAlertSuccess, showAlertError } from './util.js';
 const imgUploadOverlayElement = document.querySelector('.img-upload__overlay');
 const uploadFileElement = document.querySelector('#upload-file');
 const imgUploadCancelElement = document.querySelector('.img-upload__cancel');
-const form = document.querySelector('.img-upload__form');
+const formElement = document.querySelector('.img-upload__form');
 const textDescriptionElement = document.querySelector('.text__description');
 const textHashtagsElement = document.querySelector('.text__hashtags');
 const bodyElement = document.querySelector('body');
 const re = /^#[A-Za-zА-Яа-яЁё0-9]{1,100}$/;
 
 const scaleControlSmallerElement = document.querySelector('.scale__control--smaller');
-const scaleControlBiggerEleent = document.querySelector('.scale__control--bigger');
+const scaleControlBiggerElement = document.querySelector('.scale__control--bigger');
 const scaleControlValueElement = document.querySelector('.scale__control--value');
 const imgUploadPreviewElement = document.querySelector('#img-upload__preview');
 
@@ -22,10 +22,35 @@ const errorButtonElement = document.querySelector('#error').content.querySelecto
 const errorInnerElement = document.querySelector('#error').content.querySelector('.error__inner');
 const successInnerElement = document.querySelector('#success').content.querySelector('.success__inner');
 
+const ErrorMessages = {
+  INCORRECT_LENGTH: 'Хештег не должен быть длинее 20 символов',
+  INCORRECT_COUNT: 'Максимальное количество хэш-тегов 5',
+  INCORRECT_VALUE: 'Строка после решётки должна состоять из букв и чисел',
+  INCORRECT_FIRST_SIMBOL: 'Хештег должен начинаться с решетки',
+  INCORRECT_ONLY_GRID: 'Хештег должен содержать не только решетку',
+  INCORRECT_NOT_REPIT: 'Один и тот же хэш-тег не может быть использован дважды',
+};
+
+const MAX_HASHTAG_LENGTH = 20;
+const MAX_HASHTAG_COUNT = 5;
+
+const WEBSITE_ADDRESS_SEND_DATA = 'https://25.javascript.pages.academy/kekstagram';
+
+const MIN_SIZE_PHOTO = 25;
+const MAX_SIZE_PHOTO = 100;
+const STEP_SIZE_PHOTO = 25;
+
 // открытие модального окна
 uploadFileElement.addEventListener('click', () => {
-  imgUploadOverlayElement.classList.remove('hidden');
-  bodyElement.classList.add('modal-open');
+  imgUploadOverlayElement.classList.add('hidden');
+  bodyElement.classList.remove('modal-open');
+
+  uploadFileElement.addEventListener('change', () => {
+    if (uploadFileElement.value !== '') {
+      imgUploadOverlayElement.classList.remove('hidden');
+      bodyElement.classList.add('modal-open');
+    }
+  });
 });
 
 // изменение масштаба фотки
@@ -34,16 +59,16 @@ function countScale () {
   imgUploadPreviewElement.classList.add('scale');
 
   scaleControlSmallerElement.addEventListener('click', () => {
-    if (fieldValue > 25) {
-      fieldValue -= 25;
+    if (fieldValue > MIN_SIZE_PHOTO) {
+      fieldValue -= STEP_SIZE_PHOTO;
       imgUploadPreviewElement.style.transform = `scale(${fieldValue / 100})`;
       scaleControlValueElement.value = `${fieldValue}%`;
     }
   });
 
-  scaleControlBiggerEleent.addEventListener('click', () => {
-    if (fieldValue < 100) {
-      fieldValue += 25;
+  scaleControlBiggerElement.addEventListener('click', () => {
+    if (fieldValue < MAX_SIZE_PHOTO) {
+      fieldValue += STEP_SIZE_PHOTO;
       imgUploadPreviewElement.style.transform = `scale(${fieldValue / 100})`;
       scaleControlValueElement.value = `${fieldValue}%`;
     }
@@ -56,7 +81,7 @@ countScale();
 imgUploadCancelElement.addEventListener('click', () => {
   imgUploadOverlayElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
-  form.reset();
+  formElement.reset();
 });
 
 // скрытие модального окна Esc (при нахождении в поле ввода в комментарии или хештеге не сработает)
@@ -67,7 +92,7 @@ document.addEventListener('keydown', (evt) => {
     if (evt.key === 'Escape') {
       imgUploadOverlayElement.classList.add('hidden');
       bodyElement.classList.remove('modal-open');
-      form.reset();
+      formElement.reset();
     }
   }
 });
@@ -107,7 +132,7 @@ document.addEventListener('keydown', (evt) => {
 });
 
 //валидация хештега
-const pristine = new Pristine(form, {
+const pristine = new Pristine(formElement, {
   classTo: 'img-upload__text',
   errorClass: 'img-upload__text--invalid',
   successClass: 'img-upload__text--valid',
@@ -124,7 +149,7 @@ pristine.addValidator(textHashtagsElement, () => {
     }
   }
   return true;
-}, 'Строка после решётки должна состоять из букв и чисел');
+}, ErrorMessages.INCORRECT_VALUE);
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
@@ -134,7 +159,7 @@ pristine.addValidator(textHashtagsElement, () => {
     }
   }
   return true;
-}, 'Хештег должен начинаться с решетки');
+}, ErrorMessages.INCORRECT_FIRST_SIMBOL);
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
@@ -144,25 +169,25 @@ pristine.addValidator(textHashtagsElement, () => {
     }
   }
   return true;
-}, 'Хештег должен содержать не только решетку');
+}, ErrorMessages.INCORRECT_ONLY_GRID);
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
   for (const hashtag of arrayHashtags) {
-    if (hashtag.length > 20) {
+    if (hashtag.length > MAX_HASHTAG_LENGTH) {
       return false;
     }
   }
   return true;
-}, 'Хештег не должен быть длинее 20 символов');
+}, ErrorMessages.INCORRECT_LENGTH);
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
-  if (arrayHashtags.length > 5) {
+  if (arrayHashtags.length > MAX_HASHTAG_COUNT) {
     return false;
   }
   return true;
-}, 'Максимальное количество хэш-тегов 5');
+}, ErrorMessages.INCORRECT_COUNT);
 
 pristine.addValidator(textHashtagsElement, () => {
   const arrayHashtags = textHashtagsElement.value.split(' ');
@@ -174,10 +199,9 @@ pristine.addValidator(textHashtagsElement, () => {
     }
   }
   return true;
-}, 'Один и тот же хэш-тег не может быть использован дважды');
+}, ErrorMessages.INCORRECT_NOT_REPIT);
 
-
-form.addEventListener('submit', (evt) => {
+formElement.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
   const isValid = pristine.validate();
@@ -187,8 +211,7 @@ form.addEventListener('submit', (evt) => {
     const formData = new FormData(evt.target);
 
     fetch(
-      'https://25.javascript.pages.academy/kekstagram',
-      //'https://25.javascript.pages.academy/404',
+      WEBSITE_ADDRESS_SEND_DATA,
       {
         method: 'POST',
         body: formData,
@@ -198,7 +221,7 @@ form.addEventListener('submit', (evt) => {
         showAlertSuccess();
         imgUploadOverlayElement.classList.add('hidden');
         bodyElement.classList.remove('modal-open');
-        form.reset();
+        formElement.reset();
         successElement.classList.remove('hidden');
         closeSuccessClickButton();
         closeSuccessClickBody();
@@ -206,7 +229,7 @@ form.addEventListener('submit', (evt) => {
         showAlertError();
         imgUploadOverlayElement.classList.add('hidden');
         bodyElement.classList.remove('modal-open');
-        form.reset();
+        formElement.reset();
         errorElement.classList.remove('hidden');
         closeErrorClickBody();
         closeErrorClickButton();
@@ -215,6 +238,12 @@ form.addEventListener('submit', (evt) => {
     })
       .catch(() => {
         showAlertError();
+        imgUploadOverlayElement.classList.add('hidden');
+        bodyElement.classList.remove('modal-open');
+        formElement.reset();
+        errorElement.classList.remove('hidden');
+        closeErrorClickBody();
+        closeErrorClickButton();
       });
   }
 });
