@@ -1,6 +1,6 @@
 const effectsRadioElements = document.querySelectorAll('.effects__radio');
 const imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
-const effectLevelValue = imgUploadEffectLevelElement.querySelector('.effect-level__value');
+const effectLevelValueElement = imgUploadEffectLevelElement.querySelector('.effect-level__value');
 const imgUploadPreviewElement = document.querySelector('#img-upload__preview');
 
 // создание потягушки
@@ -9,7 +9,7 @@ noUiSlider.create(imgUploadEffectLevelElement, {
     min: 0,
     max: 1,
   },
-  start: 0.8,
+  start: 1,
   step: 0.1,
   connect: 'lower',
 });
@@ -37,13 +37,13 @@ function selectEffect () {
             min: 0,
             max: 1,
           },
-          start: 0.8,
+          start: 1,
           step: 0.1,
           connect: 'lower',
         });
         imgUploadEffectLevelElement.noUiSlider.on('update', () => {
-          effectLevelValue.value = imgUploadEffectLevelElement.noUiSlider.get();
-          imgUploadPreviewElement.style.filter = `grayscale(${effectLevelValue.value})`;
+          effectLevelValueElement.value = imgUploadEffectLevelElement.noUiSlider.get();
+          imgUploadPreviewElement.style.filter = `grayscale(${effectLevelValueElement.value})`;
         });
       }
 
@@ -54,13 +54,13 @@ function selectEffect () {
             min: 0,
             max: 1,
           },
-          start: 0.8,
+          start: 1,
           step: 0.1,
           connect: 'lower',
         });
         imgUploadEffectLevelElement.noUiSlider.on('update', () => {
-          effectLevelValue.value = imgUploadEffectLevelElement.noUiSlider.get();
-          imgUploadPreviewElement.style.filter = `sepia(${effectLevelValue.value})`;
+          effectLevelValueElement.value = imgUploadEffectLevelElement.noUiSlider.get();
+          imgUploadPreviewElement.style.filter = `sepia(${effectLevelValueElement.value})`;
         });
       }
 
@@ -71,13 +71,13 @@ function selectEffect () {
             min: 0,
             max: 100,
           },
-          start: 90,
+          start: 100,
           step: 1,
           connect: 'lower',
         });
         imgUploadEffectLevelElement.noUiSlider.on('update', () => {
-          effectLevelValue.value = imgUploadEffectLevelElement.noUiSlider.get();
-          imgUploadPreviewElement.style.filter = `invert(${effectLevelValue.value}%)`;
+          effectLevelValueElement.value = imgUploadEffectLevelElement.noUiSlider.get();
+          imgUploadPreviewElement.style.filter = `invert(${effectLevelValueElement.value}%)`;
         });
       }
 
@@ -88,13 +88,13 @@ function selectEffect () {
             min: 0,
             max: 3,
           },
-          start: 2,
+          start: 3,
           step: 0.1,
           connect: 'lower',
         });
         imgUploadEffectLevelElement.noUiSlider.on('update', () => {
-          effectLevelValue.value = imgUploadEffectLevelElement.noUiSlider.get();
-          imgUploadPreviewElement.style.filter = `blur(${effectLevelValue.value}px)`;
+          effectLevelValueElement.value = imgUploadEffectLevelElement.noUiSlider.get();
+          imgUploadPreviewElement.style.filter = `blur(${effectLevelValueElement.value}px)`;
         });
       }
 
@@ -105,13 +105,13 @@ function selectEffect () {
             min: 1,
             max: 3,
           },
-          start: 2,
+          start: 3,
           step: 0.1,
           connect: 'lower',
         });
         imgUploadEffectLevelElement.noUiSlider.on('update', () => {
-          effectLevelValue.value = imgUploadEffectLevelElement.noUiSlider.get();
-          imgUploadPreviewElement.style.filter = `brightness(${effectLevelValue.value})`;
+          effectLevelValueElement.value = imgUploadEffectLevelElement.noUiSlider.get();
+          imgUploadPreviewElement.style.filter = `brightness(${effectLevelValueElement.value})`;
         });
       }
     });

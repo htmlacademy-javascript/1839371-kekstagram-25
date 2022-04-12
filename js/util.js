@@ -1,3 +1,5 @@
+const TIME_DELAY = 500;
+
 // сообщение об ошибки отправки сообщения
 const showAlertError = () => {
 
@@ -16,7 +18,7 @@ const showAlertSuccess = () => {
 
 //устранение дребезга
 
-const debounce = (callback, timeoutDelay = 500) => {
+const debounce = (callback, timeoutDelay = TIME_DELAY) => {
   let timeoutId;
   return (...rest) => {
     clearTimeout(timeoutId);
