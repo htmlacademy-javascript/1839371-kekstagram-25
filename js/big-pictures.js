@@ -34,11 +34,11 @@ function setupComments() {
   }
 
   if (socialCommentsElements.length > MAX_COUNT_COMMENT) {
-    let countComment = 5;
+    let countComment = MAX_COUNT_COMMENT;
     socialCommentCountElement.textContent = `${countComment} из ${socialCommentsElements.length} комментариев`;
 
     const commentsLoaderClickHandler = function () {
-      countComment += 5;
+      countComment += MAX_COUNT_COMMENT;
       if (countComment < socialCommentsElements.length) {
         for (let i = 0; i < countComment; i++) {
           socialCommentsElements[i].style.display = null;

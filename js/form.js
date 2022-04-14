@@ -40,6 +40,9 @@ const MIN_SIZE_PHOTO = 25;
 const MAX_SIZE_PHOTO = 100;
 const STEP_SIZE_PHOTO = 25;
 
+const imgUploadEffectLevelElement = document.querySelector('.img-upload__effect-level');
+
+
 // открытие модального окна
 uploadFileElement.addEventListener('click', () => {
   imgUploadOverlayElement.classList.add('hidden');
@@ -82,6 +85,9 @@ imgUploadCancelElement.addEventListener('click', () => {
   imgUploadOverlayElement.classList.add('hidden');
   bodyElement.classList.remove('modal-open');
   formElement.reset();
+  imgUploadEffectLevelElement.classList.add('hidden');
+  imgUploadPreviewElement.style.filter = 'none';
+
 });
 
 // скрытие модального окна Esc (при нахождении в поле ввода в комментарии или хештеге не сработает)
@@ -93,6 +99,8 @@ document.addEventListener('keydown', (evt) => {
       imgUploadOverlayElement.classList.add('hidden');
       bodyElement.classList.remove('modal-open');
       formElement.reset();
+      imgUploadEffectLevelElement.classList.add('hidden');
+      imgUploadPreviewElement.style.filter = 'none';
     }
   }
 });
@@ -100,34 +108,46 @@ document.addEventListener('keydown', (evt) => {
 //закрытия сообщения об ошибке отправки
 const closeErrorClickButton = () => errorButtonElement.addEventListener('click', () => {
   errorElement.classList.add('hidden');
+  imgUploadEffectLevelElement.classList.add('hidden');
+  imgUploadPreviewElement.style.filter = 'none';
 });
 
 const closeErrorClickBody = () => document.addEventListener('click', (evt) => {
   if (!errorInnerElement.contains(evt.target)){
     errorElement.classList.add('hidden');
+    imgUploadEffectLevelElement.classList.add('hidden');
+    imgUploadPreviewElement.style.filter = 'none';
   }
-});
+}, {once: true});
 
 document.addEventListener('keydown', (evt) => {
   if(evt.key === 'Escape') {
     errorElement.classList.add('hidden');
+    imgUploadEffectLevelElement.classList.add('hidden');
+    imgUploadPreviewElement.style.filter = 'none';
   }
 });
 
 //закрытия сообщения об успешной отправки
 const closeSuccessClickButton = () => successButtonElement.addEventListener('click', () => {
   successElement.classList.add('hidden');
+  imgUploadEffectLevelElement.classList.add('hidden');
+  imgUploadPreviewElement.style.filter = 'none';
 });
 
 const closeSuccessClickBody = () => document.addEventListener('click', (evt) => {
   if (!successInnerElement.contains(evt.target)){
     successElement.classList.add('hidden');
+    imgUploadEffectLevelElement.classList.add('hidden');
+    imgUploadPreviewElement.style.filter = 'none';
   }
-});
+}, {once: true});
 
 document.addEventListener('keydown', (evt) => {
   if(evt.key === 'Escape') {
     successElement.classList.add('hidden');
+    imgUploadEffectLevelElement.classList.add('hidden');
+    imgUploadPreviewElement.style.filter = 'none';
   }
 });
 
